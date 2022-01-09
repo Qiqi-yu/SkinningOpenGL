@@ -29,13 +29,18 @@ public:
 	vector<Texture> loadTextures(aiMaterial* mat, aiTextureType type, string typeName);
 	int importTextureFromFile(const char* path, const string& dir);
 	void Draw(Shader shader);
+	// 计算vertices中每个顶点相关的关节与权重
 	void computeBoneWeight(aiMesh* mesh,vector<Vertex>& vertices);
 	void bindBone(Vertex& v, int* boneId, float* weight); 
+	// 读取NodeAnim之间的父子节点关系，用于计算关节全局的变换
 	void readNodesData(Assimp2GLMNode& out, const aiNode* in);
 	int useNameSearchIndex(string name);
+	// 调用update，通过骨骼变换的插值实现动画
 	void update(float interval);
+	// update中调用，计算Bone的变换矩阵
 	void computeBoneTransform(Assimp2GLMNode* node,glm::mat4 parentTransform);
 
+	// 持续时间
 	double duration;
 	double ticksPerSecond;
 	vector<Bone> bones;

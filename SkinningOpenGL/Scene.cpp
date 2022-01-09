@@ -5,8 +5,8 @@ Scene::Scene(string& filePath)
 {
 	dir = filePath.substr(0, filePath.find_last_of('/'));
 	Assimp::Importer importer;
+	// 此处的FlipUVs实现Opengl的沿y轴翻转
 	ascene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_FlipUVs);
-	/*ascene = importer.ReadFile(filePath,aiProcess_Triangulate);*/
 	
 
 	if (!ascene || ascene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !ascene->mRootNode)
@@ -198,10 +198,6 @@ void Scene::computeBoneWeight(aiMesh* mesh, vector<Vertex>& vertices)
 		}
 	}
 
-	ofstream fout;
-	fout.open("test1.txt");
-	fout << "write something" << endl;
-
 
 	float dis[MAX_BONE]; int boneId[MAX_BONE]; float weight[MAX_BONE];
 	auto size = boneInfos.size();
@@ -218,6 +214,7 @@ void Scene::computeBoneWeight(aiMesh* mesh, vector<Vertex>& vertices)
 			pos = pos / pos.w;
 			for (int k = 0; k < MAX_BONE; k++) {
 				if (glm::dot(pos, pos) < dis[k]) {
+					// 循环后移，保留被刷下去的第一位
 					for (int j = MAX_BONE - 1; j > k; j--) {
 						dis[j] = dis[j - 1];
 						boneId[j] = boneId[j - 1];
@@ -240,10 +237,8 @@ void Scene::computeBoneWeight(aiMesh* mesh, vector<Vertex>& vertices)
 		}
 		for (int k = 0; k < MAX_BONE; k++) {
 			bindBone(vertices[i], boneId, weight);
-		}
-		fout << boneId[0] << " " << weight[0] << endl;
+		} 
 	}
-	fout.close();
 
 }
 
@@ -302,6 +297,7 @@ void Scene::computeBoneTransform(Assimp2GLMNode* node, glm::mat4 parentTransform
 			break;
 		}
 	}
+	// bone的旋转为全局旋转
 	glm::mat4 globalTrans = parentTransform * trans;
 
 	int idx = useNameSearchIndex(name);

@@ -6,6 +6,7 @@
 
 using namespace std;
 
+// 读取Assimp::Bone，记录骨骼的基本信息
 class BoneInfo
 {
 public:
