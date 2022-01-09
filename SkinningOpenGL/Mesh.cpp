@@ -12,7 +12,6 @@ Mesh::Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture
 void Mesh::Draw(Shader shader)
 {
     unsigned int diffuse = 1;
-    unsigned int specular = 1;
     for (unsigned int i = 0; i < textures.size(); i++)
     {
         glActiveTexture(GL_TEXTURE0 + i); // 在绑定之前激活相应的纹理单元
@@ -21,10 +20,8 @@ void Mesh::Draw(Shader shader)
         string name = textures[i].type;
         if (name == "texture_diffuse")
             number = std::to_string(diffuse++);
-        else if (name == "texture_specular")
-            number = std::to_string(specular++);
 
-        shader.setFloat(("material." + name + number).c_str(), i);
+        /*shader.setFloat((name + number).c_str(), i);*/
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
     glActiveTexture(GL_TEXTURE0);
@@ -61,7 +58,7 @@ void Mesh::setupMesh()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
     // bone IDs
     glEnableVertexAttribArray(3);
-    glVertexAttribPointer(3, MAX_BONE, GL_INT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex,boneIds));
+    glVertexAttribIPointer(3, MAX_BONE, GL_INT,sizeof(Vertex), (void*)offsetof(Vertex,boneIds));
     // bone weights
     glEnableVertexAttribArray(4);
     glVertexAttribPointer(4, MAX_BONE, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, weights));

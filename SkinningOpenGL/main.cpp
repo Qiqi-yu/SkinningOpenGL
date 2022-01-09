@@ -1,4 +1,3 @@
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -35,7 +34,7 @@ int main() {
     }
     /*std::cout << glGetString(GL_VERSION) << std::endl;*/
 
-    stbi_set_flip_vertically_on_load(true);
+    /*stbi_set_flip_vertically_on_load(true);*/
 
 
     glEnable(GL_DEPTH_TEST);
@@ -60,8 +59,8 @@ int main() {
         glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)WIDTH/ (float)HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, -0.4f, 0.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(.5f, .5f, .5f));
+        model = glm::translate(model, glm::vec3(0.0f, -0.7f, 0.0f)); // translate it down so it's at the center of the scene
+        model = glm::scale(model, glm::vec3(1.0f));
         glm::mat4 mvpMat = proj * view * model;
 
         shader.setMat4("mvpMat", mvpMat);

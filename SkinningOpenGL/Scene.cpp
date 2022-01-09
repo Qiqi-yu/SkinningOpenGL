@@ -6,6 +6,8 @@ Scene::Scene(string& filePath)
 	dir = filePath.substr(0, filePath.find_last_of('/'));
 	Assimp::Importer importer;
 	ascene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_FlipUVs);
+	/*ascene = importer.ReadFile(filePath,aiProcess_Triangulate);*/
+	
 
 	if (!ascene || ascene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !ascene->mRootNode)
 	{
@@ -100,8 +102,6 @@ Mesh Scene::processMesh(aiMesh* mesh, const aiScene* scene)
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 		vector<Texture> diffuseMaps = loadTextures(material,aiTextureType_DIFFUSE, "texture_diffuse");
 		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-		vector<Texture> specularMaps = loadTextures(material,aiTextureType_SPECULAR, "texture_specular");
-		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 	}
 	computeBoneWeight(mesh, vertices);
 	Mesh currMesh = Mesh(vertices, indices, textures);  
@@ -197,15 +197,24 @@ void Scene::computeBoneWeight(aiMesh* mesh, vector<Vertex>& vertices)
 			boneInfos.push_back(info);
 		}
 	}
+
+	ofstream fout;
+	fout.open("test1.txt");
+	fout << "write something" << endl;
+
+
 	float dis[MAX_BONE]; int boneId[MAX_BONE]; float weight[MAX_BONE];
 	auto size = boneInfos.size();
 	for (int i = 0; i < vertices.size(); i++) {
 		for (int i = 0; i < MAX_BONE; i++) {
 			dis[i] = 1000000;
 		}
-		for (unsigned int i = 0; i < size; i++) {
-			glm::vec4 pos = boneInfos[i].offset * glm::vec4(vertices[i].Position, 1.0f);
-			glm::vec4 truePos = glm::inverse(boneInfos[i].offset) * glm::vec4(0.0f);
+		if (i == 76) {
+			bool flag = true;
+		}
+		for (unsigned int idx = 0; idx < size; idx++) {
+			glm::vec4 pos = boneInfos[idx].offset * glm::vec4(vertices[i].Position, 1.0f);
+			glm::vec4 truePos = glm::inverse(boneInfos[idx].offset) * glm::vec4(0.0f);
 			pos = pos / pos.w;
 			for (int k = 0; k < MAX_BONE; k++) {
 				if (glm::dot(pos, pos) < dis[k]) {
@@ -214,7 +223,7 @@ void Scene::computeBoneWeight(aiMesh* mesh, vector<Vertex>& vertices)
 						boneId[j] = boneId[j - 1];
 					}
 					dis[k] = glm::dot(pos, pos);
-					boneId[k] = i;
+					boneId[k] = idx;
 					break;
 				}
 			}
@@ -232,7 +241,9 @@ void Scene::computeBoneWeight(aiMesh* mesh, vector<Vertex>& vertices)
 		for (int k = 0; k < MAX_BONE; k++) {
 			bindBone(vertices[i], boneId, weight);
 		}
+		fout << boneId[0] << " " << weight[0] << endl;
 	}
+	fout.close();
 
 }
 

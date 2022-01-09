@@ -10,7 +10,7 @@
 // reference to learnopengl Mesh Content: https://learnopengl-cn.github.io/03%20Model%20Loading/02%20Mesh/
 
 using namespace std;
-# define MAX_BONE 2
+#define MAX_BONE 2
 struct Vertex {
     glm::vec3 Position;
     glm::vec3 Normal;
